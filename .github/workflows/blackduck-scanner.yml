@@ -35,5 +35,14 @@ jobs:
           args: '--blackduck.url="${{ secrets.BLACKDUCK_URL}}" --blackduck.api.token="${{ secrets.BLACKDUCK_API_TOKEN}}" --detect.risk.report.pdf=true --detect.project.name=AK-github-actions --detect.project.version.name=0.1'
 
       # -- Read projects from Blackduck
-      - name: Synopsys Detect
+      - name: Read results form blackduck server and save it to DB
         run: mvn spring-boot:run
+
+
+#        - name: Make Request
+#          id: myRequest
+#          uses: fjogeleit/http-request-action@master
+#          with:
+#            url: "http://yoursite.com/api"
+#        - name: Show Response
+#          run: echo ${{ steps.myRequest.outputs.response }}
