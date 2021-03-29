@@ -38,3 +38,9 @@ camunda.bpm:
     firstName: Demo
   filter:
     create: All tasks
+
+blackduck:
+  url: ${BLACKDUCK_URL:https://poc96.blackduck.synopsys.com}
+  token: ${BLACKDUCK_TOKEN:YTgzZTdlZWUtM2ZiMS00Y2QwLWFiMmYtMWIwNWY0NmFiMDZlOmNkZWQ4YTkzLWNjYjEtNDM2Yi04ZTI2LWNiN2ViNzc1OGYzMg==}
+  userName: ${BLACKDUCK_USER}
+  timeout: ${BLACKDUCK_TIMEOUT:300}
