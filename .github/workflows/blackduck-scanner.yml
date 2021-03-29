@@ -33,3 +33,7 @@ jobs:
         uses: blackducksoftware/github-action@2.0.0
         with:
           args: '--blackduck.url="${{ secrets.BLACKDUCK_URL}}" --blackduck.api.token="${{ secrets.BLACKDUCK_API_TOKEN}}" --detect.risk.report.pdf=true --detect.project.name=AK-github-actions --detect.project.version.name=0.1'
+
+      # -- Read projects from Blackduck
+      - name: Synopsys Detect
+        run: mvn spring-boot:run
