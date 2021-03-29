@@ -15,7 +15,8 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  build:
+
+  build-publish-to-blackduck:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
