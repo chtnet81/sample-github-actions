@@ -1,6 +1,7 @@
 package org.camunda.bpm.getstarted.blackduck;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.event.EventListener;
@@ -22,8 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *  REST Client for Blackduck API for testing purpose. The goal is to use this class from GitHub actions
- *
+ * REST Client for Blackduck API for testing purpose. The goal is to use this class from GitHub actions
  */
 @Component
 @Slf4j
@@ -39,10 +39,9 @@ public class BackduckClient {
     private static final String PATH_POLICY_STATUS = "/api/projects/{0}/versions/{1}/components/{2}/versions/{3}/policy-status";
 
 
-    @Value("${blackduck.url}")
-    private String serverUrl;
-    @Value("${blackduck.token}")
-    private String token;
+    @Autowired
+    private BlackduckConfigs blackduckConfigs;
+
     private RestTemplate restTemplate;
     private BlackduckAuthenticated authentication;
 
@@ -53,18 +52,18 @@ public class BackduckClient {
         messageConverters.add(new StringHttpMessageConverter());
         messageConverters.add(new MappingJackson2HttpMessageConverter());
         this.restTemplate.setMessageConverters(messageConverters);
-
     }
 
     @EventListener
     public void onHandle(ApplicationStartedEvent event) {
         log.info("listing blackduck projects...");
-        BlackduckProjects blackduckProjects = getProjects("AK-github-actions");
+        BlackduckProjects blackduckProjects = getProjects(blackduckConfigs.getProjectName());
         blackduckProjects.getProjects().forEach(blackduckProject -> {
             log.info("project found: " + blackduckProject.getName());
         });
 
-        // shutdown Spring app
+        log.info("propery project value :" + blackduckConfigs.getProjectName());
+        log.info("closing application");
         System.exit(0);
     }
 
@@ -82,7 +81,7 @@ public class BackduckClient {
                 projectFilter = "&q=name:" + filterProjectname;
             }
             ResponseEntity<BlackduckProjects> response = this.restTemplate
-                    .exchange(this.serverUrl + PATH_PROJECTS + "?limit=100000" + projectFilter, HttpMethod.GET, entity, BlackduckProjects.class);
+                    .exchange(blackduckConfigs.getServerUrl() + PATH_PROJECTS + "?limit=100000" + projectFilter, HttpMethod.GET, entity, BlackduckProjects.class);
             return response.getBody();
         } catch (HttpClientErrorException e) {
             if (e.getRawStatusCode() == 404) {
@@ -103,14 +102,14 @@ public class BackduckClient {
     private void loginToBlackDuckServer() {
         try {
             HttpHeaders headers = new HttpHeaders();
-            headers.add("Authorization", "token " + this.token);
+            headers.add("Authorization", "token " + blackduckConfigs.getToken());
             headers.setContentType(MediaType.APPLICATION_JSON);
 
             HttpEntity entity = new HttpEntity(headers);
             this.authentication = null;
             log.debug("Blackduck authentication ...");
             ResponseEntity<BlackduckAuthenticated> response =
-                    this.restTemplate.exchange(this.serverUrl + PATH_AUTHENTICATION, HttpMethod.POST, entity, BlackduckAuthenticated.class);
+                    this.restTemplate.exchange(blackduckConfigs.getServerUrl() + PATH_AUTHENTICATION, HttpMethod.POST, entity, BlackduckAuthenticated.class);
             this.authentication = response.getBody();
             if (this.authentication == null || this.authentication.getBearerToken() == null
                     || this.authentication.getBearerToken().isEmpty()) {

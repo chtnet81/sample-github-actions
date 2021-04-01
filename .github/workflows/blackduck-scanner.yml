@@ -1,13 +1,18 @@
 #####################################
-#
+# FOSS Scanner  using Blackduck server
+### compile code
+### publish scan results on blackduck server
+### TODO: publish scan result to DevSecOps backend via REST API
 #####################################
 
 name: Blackduck scanner
 on:
-  # Triggers the workflow on push or pull request events but only for the master branch
+  # Triggers the workflow on push or pull request events
   push:
+    # only for master branch
     branches: [ master ]
   pull_request:
+    # only for master and test-github-actions branches
     branches: [ master, test-github-actions ]
 
   # Allows you to run this workflow manually from the Actions tab
@@ -15,8 +20,7 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-
-  build-publish-to-blackduck:
+  build-scan:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -30,19 +34,17 @@ jobs:
 
       # -- scan app with blackduck
       - name: Synopsys Detect
+        needs: build
         uses: blackducksoftware/github-action@2.0.0
         with:
           args: '--blackduck.url="${{ secrets.BLACKDUCK_URL}}" --blackduck.api.token="${{ secrets.BLACKDUCK_API_TOKEN}}" --detect.risk.report.pdf=true --detect.project.name=AK-github-actions --detect.project.version.name=0.1'
 
-      # -- Read projects from Blackduck
+  upload-results:
+    # -- Read projects from Blackduck by running CGI customized client
+    runs-on: ubuntu-latest
+    steps:
       - name: Read results form blackduck server and save it to DB
-        run: mvn spring-boot:run
-
-
-#        - name: Make Request
-#          id: myRequest
-#          uses: fjogeleit/http-request-action@master
-#          with:
-#            url: "http://yoursite.com/api"
-#        - name: Show Response
-#          run: echo ${{ steps.myRequest.outputs.response }}
+        #run: mvn spring-boot:run #todo run jar only, pass parameters
+        run: |
+          mvn package
+          java -jar target/loan-approval-spring-boot-0.0.1-SNAPSHOT.jar --project.name=AK-github-actions --project.version=0.1

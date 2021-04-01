@@ -6,16 +6,13 @@ import org.camunda.bpm.engine.TaskService;
 import org.camunda.bpm.engine.repository.ProcessDefinition;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.engine.task.Attachment;
-import org.camunda.bpm.engine.task.Comment;
 import org.camunda.bpm.engine.task.Task;
 import org.camunda.bpm.spring.boot.starter.annotation.EnableProcessApplication;
-import org.camunda.bpm.spring.boot.starter.event.PostDeployEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.event.EventListener;
 
 import java.util.List;
 
@@ -34,28 +31,51 @@ public class WebappExampleProcessApplication {
     private TaskService taskService;
 
     public static void main(String... args) {
+
+        assert contains(args, "project.name");
+        assert contains(args, "project.version");
+
+
         SpringApplication.run(WebappExampleProcessApplication.class, args);
     }
 
-    @EventListener
-    private void processPostDeploy(PostDeployEvent event) {
+    public static boolean contains(final String[] array, final String searchKey) {
 
-        String processInstanceId = runtimeService.startProcessInstanceByKey("sample").getProcessInstanceId();
-        logger.info("started instance sample");
+        boolean isPresent = false;
 
-        Task approveStep = getActiveTask(processInstanceId, "Approve Application");
+        for (String argument : array) {
+            if (argument.equalsIgnoreCase(searchKey)) {
+                isPresent = true;
+                System.out.println("found :" + searchKey);
+                break;
+            }
+        }
 
-        // write comments before completing task
-        taskService.createComment(approveStep.getId(), processInstanceId, "all looks okay");
-        // save some attachment etc
-        taskService.saveAttachment(createSampleAttachment(approveStep));
-
-        // retrieve all comments of approve task
-        List<Comment> taskComments = taskService.getTaskComments(approveStep.getId());
-        taskComments.forEach(comment -> logger.info("" + comment.getFullMessage()));
-        //    taskService.complete(approveStep.getId());
-
+        return isPresent;
     }
+
+    /**
+     * Workflow currently disabled
+     *
+     * @EventListener private void processPostDeploy(PostDeployEvent event) {
+     * <p>
+     * String processInstanceId = runtimeService.startProcessInstanceByKey("sample").getProcessInstanceId();
+     * logger.info("started instance sample");
+     * <p>
+     * Task approveStep = getActiveTask(processInstanceId, "Approve Application");
+     * <p>
+     * // write comments before completing task
+     * taskService.createComment(approveStep.getId(), processInstanceId, "all looks okay");
+     * // save some attachment etc
+     * taskService.saveAttachment(createSampleAttachment(approveStep));
+     * <p>
+     * // retrieve all comments of approve task
+     * List<Comment> taskComments = taskService.getTaskComments(approveStep.getId());
+     * taskComments.forEach(comment -> logger.info("" + comment.getFullMessage()));
+     * //    taskService.complete(approveStep.getId());
+     * <p>
+     * }
+     */
 
     private Attachment createSampleAttachment(Task task) {
         String attachmentType = "someAttachment";
@@ -108,6 +128,8 @@ public class WebappExampleProcessApplication {
                         .list();
 
         return processInstances.get(0);
+
     }
+
 
 }
