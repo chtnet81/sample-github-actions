@@ -41,7 +41,7 @@ jobs:
   upload-results:
     # -- Read projects from Blackduck by running CGI customized client
     runs-on: ubuntu-latest
-    needs: build
+    needs: build-scan
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK 1.8
