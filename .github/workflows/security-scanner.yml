@@ -33,7 +33,14 @@ jobs:
         SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: true
       ports:
         - 9090
+
+
     steps:
+      - name: check connectivity
+        run: |
+          docker ps
+          ifconfig
+
       - name: Checkout Source Code
         uses: actions/checkout@v2
 
