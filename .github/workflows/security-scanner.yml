@@ -28,7 +28,7 @@ jobs:
   scan-security:
     runs-on: ubuntu-latest
 
-    container: node:10.18-jessie
+    container: ubuntu-latest
 
     services:
       sonar:
@@ -44,7 +44,7 @@ jobs:
         run: |
           ls
           cat /etc/os-release
-          apk add curl
+          apt get curl
           curl localhost
 
       - name: Checkout Source Code
