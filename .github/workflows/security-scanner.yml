@@ -42,8 +42,8 @@ jobs:
     steps:
       - name: check connectivity
         run: |
+          ls
           cat /etc/os-release
-          ifconfig
           apk add curl
           curl localhost
 
