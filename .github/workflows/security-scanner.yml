@@ -54,4 +54,4 @@ jobs:
           mvn -version
       - run: mvn sonar:sonar -Dsonar.host.url="${{ env.SONARQUBE_URL }}" -Dsonar.login="${{ env.SONARQUBE_LOGIN }}" -Dsonar.password="${{ env.SONARQUBE_PASSWORD }}"
         env:
-          SONARQUBE_URL: http://sonar:9090
+          SONARQUBE_URL: http://localhost:9090
