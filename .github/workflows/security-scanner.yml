@@ -28,7 +28,7 @@ jobs:
   scan-security:
     runs-on: ubuntu-latest
 
-    container: node:10.18-jessie
+    container: openjdk:8-jdk-alpine3.9
 
     services:
       sonar:
@@ -42,9 +42,9 @@ jobs:
     steps:
       - name: check connectivity
         run: |
-          apt update
+          apk update
           cat /etc/os-release
-          apt get curl
+          apk add curl
           curl localhost
 
       - name: Checkout Source Code
