@@ -1,0 +1,45 @@
+#####################################
+# Security Scanner  using SonarQube
+### compile code
+### publish scan results to Sonar Server
+### TODO: publish scan result to DevSecOps backend via REST API
+#####################################
+
+env:
+  SONARQUBE_URL: http://localhost:9090    # sonarqube server URL
+  SONARQUBE_LOGIN: admin                  # default sonarqube username
+  SONARQUBE_PASSWORD: admin               # default sonarqube password
+
+name: Security Scanner
+on:
+  # Triggers the workflow on push or pull request events
+  push:
+    # only for master branch
+    branches: [ master ]
+  pull_request:
+    # only for master and test-github-actions branches
+    branches: [ master, test-github-actions ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequential or in parallel
+jobs:
+  scan-security:
+    container:
+      image: sonarqube:latest
+      env:
+        SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: true
+      ports:
+        - 9090
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v2
+
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+      - run: |
+          ls
+          mvn sonar:sonar -Dsonar.host.url="${{ env.SONARQUBE_URL }}" -Dsonar.login="${{ env.SONARQUBE_LOGIN }}" -Dsonar.password="${{ env.SONARQUBE_PASSWORD }}"
