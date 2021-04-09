@@ -44,8 +44,9 @@ jobs:
         run: |
           apk update
           cat /etc/os-release
+          ifconfig
           apk add curl
-          curl localhost
+          curl sonar:9000
 
       - name: Checkout Source Code
         uses: actions/checkout@v2
