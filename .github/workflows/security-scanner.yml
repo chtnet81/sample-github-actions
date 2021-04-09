@@ -38,8 +38,7 @@ jobs:
     steps:
       - name: check connectivity
         run: |
-          docker ps
-          ifconfig
+         ifconfig
 
       - name: Checkout Source Code
         uses: actions/checkout@v2
