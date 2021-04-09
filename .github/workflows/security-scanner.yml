@@ -28,7 +28,7 @@ jobs:
   scan-security:
     runs-on: ubuntu-latest
 
-    container: ubuntu-latest
+    container: node:10.18-jessie
 
     services:
       sonar:
@@ -42,7 +42,7 @@ jobs:
     steps:
       - name: check connectivity
         run: |
-          ls
+          apt update
           cat /etc/os-release
           apt get curl
           curl localhost
