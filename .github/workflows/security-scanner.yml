@@ -26,6 +26,7 @@ on:
 # A workflow run is made up of one or more jobs that can run sequential or in parallel
 jobs:
   scan-security:
+    runs-on: ubuntu-latest
     container:
       image: sonarqube:latest
       env:
