@@ -28,21 +28,24 @@ jobs:
   scan-security:
     runs-on: ubuntu-latest
 
-    container:
-      image: sonarqube:latest
-      env:
-        SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: true
-      ports:
-        - 9090
+    container: node:10.18-jessie
+
+    services:
+      sonar:
+        image: sonarqube:latest
+        ports:
+          - 9000:9000
+        env:
+          SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: true
 
 
     steps:
       - name: check connectivity
         run: |
-         ls -l
-         ifconfig
-         apk add curl
-         curl localhost:9000
+          cat /etc/os-release
+          ifconfig
+          apk add curl
+          curl localhost
 
       - name: Checkout Source Code
         uses: actions/checkout@v2
