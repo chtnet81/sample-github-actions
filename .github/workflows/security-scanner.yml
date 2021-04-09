@@ -27,6 +27,7 @@ on:
 jobs:
   scan-security:
     runs-on: ubuntu-latest
+
     container:
       image: sonarqube:latest
       env:
@@ -39,6 +40,8 @@ jobs:
       - name: check connectivity
         run: |
          ifconfig
+         apk add curl
+         curl localhost:9000
 
       - name: Checkout Source Code
         uses: actions/checkout@v2
