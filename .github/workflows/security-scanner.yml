@@ -41,6 +41,12 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
+      - name: setup maven
+        run: |
+          sudo apt update
+          sudo apt install maven
+          mvn -version
       - run: |
-          ls
+          ls -l
+          mvn -B package --file pom.xml
           mvn sonar:sonar -Dsonar.host.url="${{ env.SONARQUBE_URL }}" -Dsonar.login="${{ env.SONARQUBE_LOGIN }}" -Dsonar.password="${{ env.SONARQUBE_PASSWORD }}"
