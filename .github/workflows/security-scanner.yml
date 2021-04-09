@@ -41,7 +41,7 @@ jobs:
         run: |
          ifconfig
          apk add curl
-         curl localhost:9000
+         curl localhost:9090
 
       - name: Checkout Source Code
         uses: actions/checkout@v2
