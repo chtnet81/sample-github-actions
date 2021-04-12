@@ -1,7 +1,7 @@
 #####################################
 # Security Scanner  using SonarQube
 ### compile code
-### publish scan results to Sonar Server
+### publish scan results to Sonar Server/Cloud
 ### TODO: publish scan result to DevSecOps backend via REST API
 #####################################
 
@@ -27,7 +27,8 @@ on:
 jobs:
   scan-security:
     runs-on: ubuntu-latest
-
+    # run a docker container on host machine, expose port 9000 accessible from host vm
+    # This step is not needed if customer already has sonar server/cloud
     services:
       sonar:
         image: sonarqube:latest
@@ -36,7 +37,7 @@ jobs:
         env:
           SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: true
 
-
+    # run all these steps inside docker container
     steps:
       - name: check connectivity
         run: docker ps
