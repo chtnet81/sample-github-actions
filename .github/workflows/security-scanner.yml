@@ -67,7 +67,7 @@ jobs:
   upload-results:
     # -- Read projects from sonar server by running CGI customized client
     runs-on: ubuntu-latest
-    needs: build-scan
+    needs: scan-security
     steps:
       - uses: actions/checkout@v2 # TODO Improvement: this can be avoided by reading artifacts from build step (without checkout)
       - name: Set up JDK 1.8
