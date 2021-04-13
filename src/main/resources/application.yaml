@@ -1,3 +1,5 @@
+server:
+  port: 8082
 spring:
   ###
   #   Database Settings
@@ -44,3 +46,6 @@ blackduck:
   token: ${BLACKDUCK_TOKEN:YTgzZTdlZWUtM2ZiMS00Y2QwLWFiMmYtMWIwNWY0NmFiMDZlOmNkZWQ4YTkzLWNjYjEtNDM2Yi04ZTI2LWNiN2ViNzc1OGYzMg==}
   userName: ${BLACKDUCK_USER}
   timeout: ${BLACKDUCK_TIMEOUT:300}
+
+sonar:
+  projectName: loan-approval-spring-boot

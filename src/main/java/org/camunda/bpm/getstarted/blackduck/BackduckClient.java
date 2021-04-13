@@ -2,9 +2,6 @@ package org.camunda.bpm.getstarted.blackduck;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.event.ApplicationStartedEvent;
-import org.springframework.context.event.EventListener;
 import org.springframework.http.*;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestFactory;
@@ -13,12 +10,9 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.ResourceAccessException;
-import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.*;
 
-import java.net.ConnectException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,21 +48,12 @@ public class BackduckClient {
         this.restTemplate.setMessageConverters(messageConverters);
     }
 
-    @EventListener
-    public void onHandle(ApplicationStartedEvent event) {
-        log.info("listing blackduck projects...");
-        BlackduckProjects blackduckProjects = getProjects(blackduckConfigs.getProjectName());
-        blackduckProjects.getProjects().forEach(blackduckProject -> {
-            log.info("project found: " + blackduckProject.getName());
-        });
 
-        log.info("propery project value :" + blackduckConfigs.getProjectName());
-        log.info("closing application");
-        System.exit(0);
-    }
-
-    private BlackduckProjects getProjects(final String filterProjectname) {
-        loginToBlackDuckServer();
+    public BlackduckProjects getProjects(final String filterProjectname) {
+        if (! loginToBlackDuckServer()){
+            log.error("unable to login to blackduck server");
+            return null;
+        }
         try {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
@@ -99,7 +84,8 @@ public class BackduckClient {
     }
 
 
-    private void loginToBlackDuckServer() {
+    private boolean loginToBlackDuckServer() {
+        boolean isConnectedToBlackDuckServer = false;
         try {
             HttpHeaders headers = new HttpHeaders();
             headers.add("Authorization", "token " + blackduckConfigs.getToken());
@@ -115,18 +101,12 @@ public class BackduckClient {
                     || this.authentication.getBearerToken().isEmpty()) {
                 throw new RuntimeException("Internal authentication exception");
             }
+            isConnectedToBlackDuckServer = true;
         } catch (RestClientException e) {
-            if (e instanceof ResourceAccessException && e.getCause() != null && e.getCause() instanceof ConnectException) {
-                throw new RuntimeException(e.getMessage(), e);
-            }
-            if (e instanceof HttpClientErrorException) {
-                HttpClientErrorException hcee = (HttpClientErrorException) e;
-                if (hcee.getStatusCode() == HttpStatus.UNAUTHORIZED) {
-                    log.info("user unauthorized to login");
-                }
-            }
-
+            log.error("unable to login to blackduck server " + blackduckConfigs.getServerUrl(), e);
         }
+        return isConnectedToBlackDuckServer;
     }
-
 }
+
+
