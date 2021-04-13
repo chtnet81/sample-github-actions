@@ -56,6 +56,9 @@ jobs:
       - name: Build simple java app with maven
         run: mvn -B package --file pom.xml
 
+      - name: wait for some second
+        run: sleep 10
+
       - name: Run Sonar Scanner
         run: mvn sonar:sonar -Dsonar.host.url="http://localhost:9000" -Dsonar.login="admin" -Dsonar.password="admin"
         env:
