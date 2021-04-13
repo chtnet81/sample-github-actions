@@ -57,7 +57,7 @@ jobs:
 
         # https://community.sonarsource.com/t/fail-to-parse-entry-in-bootstrap-index-returned-from-sonar-scanner/8788
       - name: wait for some second for synchronization
-        run: sleep 5
+        run: sleep 10
 
       - name: Run Sonar Scanner
         run: mvn sonar:sonar -Dsonar.host.url="${{ env.SONARQUBE_URL }}" -Dsonar.login="${{ env.SONARQUBE_LOGIN }}" -Dsonar.password="${{ env.SONARQUBE_PASSWORD }}"
