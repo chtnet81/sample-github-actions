@@ -6,7 +6,7 @@
 #####################################
 
 env:
-   # sonarqube server URL
+  # sonarqube server URL
   SONARQUBE_LOGIN: admin                  # default sonarqube username
   SONARQUBE_PASSWORD: admin               # default sonarqube password
 
